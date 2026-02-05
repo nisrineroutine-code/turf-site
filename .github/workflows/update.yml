@@ -1,0 +1,29 @@
+name: Update Pronos Daily
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # Had l-kod m3nah: "Khdem kol nhar m3a 6 d-sba7"
+  workflow_dispatch: # Hadi bach t-khddmo nta b-iddik ila bghiti t-jereb
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Run scraper
+        run: python scraper.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add index.html
+          git commit -m "Mise à jour automatique des pronos" || exit 0
+          git push
